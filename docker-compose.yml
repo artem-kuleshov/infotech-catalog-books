@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   nginx:
+    container_name: infotech_nginx
     image: nginx:latest
     volumes:
       - ./src:/var/www/app
       - ./_docker/conf/nginx.conf/:/etc/nginx/conf.d/default.conf:ro
     ports:
       - 8888:80
-    container_name: infotech_nginx
 
   app:
     container_name: infotech_app
@@ -23,6 +23,7 @@ services:
         - nginx
 
   db:
+    container_name: infotech_db
     image: mysql:latest
     restart: always
     environment:
@@ -33,9 +34,9 @@ services:
     volumes:
         - ./tmp_folder/db:/var/lib/mysql
     command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
-    container_name: infotech_db
 
   composer:
+    container_name: infotech_composer
     build:
       context: _docker/dockerfiles
       dockerfile: composer.Dockerfile
