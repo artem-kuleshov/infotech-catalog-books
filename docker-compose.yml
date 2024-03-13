@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./src:/var/www/app
+      - ./_docker/conf/nginx.conf/:/etc/nginx/conf.d/default.conf:ro
+    ports:
+      - 8888:80
+    container_name: infotech_nginx
+
+  app:
+    container_name: infotech_app
+    build:
+        context: _docker/dockerfiles
+        dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/app
+      - ./_docker/conf/php.ini/:/usr/local/etc/php/conf.d/php.ini:ro
+    depends_on:
+        - db
+        - nginx
+
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_DATABASE: books
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+        - 8102:3306
+    volumes:
+        - ./tmp_folder/db:/var/lib/mysql
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_unicode_ci
+    container_name: infotech_db
+
+  composer:
+    build:
+      context: _docker/dockerfiles
+      dockerfile: composer.Dockerfile
+    volumes:
+      - ./src:/var/www/app
+
+  yii:
+    container_name: infotech_yii
+    build:
+      context: _docker/dockerfiles
+      dockerfile: php.Dockerfile
+    volumes:
+      - ./src:/var/www/app
+    entrypoint: ["php", "/var/www/app/yii"]
