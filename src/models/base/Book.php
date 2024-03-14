@@ -32,7 +32,7 @@ class Book extends ActiveRecord
     /**
      * @throws \yii\db\Exception
      */
-    public function saveSoAuthors(array $authors = [])
+    public function saveAuthors(array $authors = [])
     {
         Yii::$app->db->createCommand("DELETE FROM book_user WHERE book_id = :book_id", [':book_id' => $this->id])->execute();
 

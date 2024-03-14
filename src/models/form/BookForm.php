@@ -3,6 +3,8 @@
 namespace app\models\form;
 
 use app\models\base\Book;
+use app\models\base\Subscription;
+use app\models\integration\Smspilot;
 use app\models\User;
 use Yii;
 use yii\base\Model;
@@ -55,20 +57,22 @@ class BookForm extends Model
     {
         $transaction = Yii::$app->db->beginTransaction();
 
-        try {
+//        try {
             $this->uploadFile();
             $this->save();
             $transaction->commit();
 
+            $this->sendSms();
+
             \Yii::$app->session->setFlash('success', "Книга '{$this->name}' добавлен");
             return true;
-        } catch (\Exception $e) {
-            Yii::$app->session->setFlash('error', "Возникла непредвиденная ошибка при добавлении книги. Попробуйте позже");
-            $this->removeFile();
-            $transaction->rollBack();
-
-            return false;
-        }
+//        } catch (\Exception $e) {
+//            Yii::$app->session->setFlash('error', "Возникла непредвиденная ошибка при добавлении книги. Попробуйте позже");
+//            $this->removeFile();
+//            $transaction->rollBack();
+//
+//            return false;
+//        }
     }
 
     public function update(Book $book): bool
@@ -115,7 +119,7 @@ class BookForm extends Model
 
         if ($book->save(false)) {
             $this->co_authors = $this->co_authors ?: [];
-            $book->saveSoAuthors($this->co_authors);
+            $book->saveAuthors($this->co_authors);
 
             return true;
         }
@@ -123,16 +127,41 @@ class BookForm extends Model
         return false;
     }
 
-    public function uploadFile()
+    private function uploadFile()
     {
         $this->path_file = 'uploads/' . $this->image->baseName . time() . '.' . $this->image->extension;
         $this->image->saveAs($this->path_file);
     }
 
-    public function removeFile()
+    private function removeFile()
     {
         if (file_exists($this->path_file)) {
             unlink($this->path_file);
         }
+    }
+
+    /**
+     * @throws \GuzzleHttp\Exception\GuzzleException
+     */
+    private function sendSms(): void
+    {
+        $this->co_authors[] = Yii::$app->user->getId();
+
+        $subscriptions = Subscription::find()
+            ->where(['in', 'author_id', $this->co_authors])
+            ->with('author')
+            ->asArray()
+            ->all();
+
+        if (!$subscriptions) return;
+
+        $data = [];
+        foreach ($subscriptions as $subscription) {
+            $author = User::getFullName($subscription['author']);
+            $data[] = ['phone' => $subscription['phone'], 'text' => "Добавлена новая книга {$this->name}. Автор: $author"];
+        }
+
+        $sms = new Smspilot();
+        $sms->send($data);
     }
 }
