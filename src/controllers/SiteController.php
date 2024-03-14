@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use app\models\base\Book;
 use app\models\form\RegistrationForm;
+use app\models\form\TopForm;
 use JetBrains\PhpStorm\ArrayShape;
 use Yii;
 use yii\data\Pagination;
@@ -69,9 +70,22 @@ class SiteController extends Controller
     {
         $query = Book::find();
         $pages = new Pagination(['totalCount' => $query->count(), 'forcePageParam' => false, 'pageSizeParam' => false]);
-        $books = $query->with(['coAuthors', 'user'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
+        $books = $query->with(['authors', 'user'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
 
         return $this->render('index', compact('books', 'pages'));
+    }
+
+    public function actionTop(int $year = null): string
+    {
+        if (!$year) $year = date('Y');
+
+        $model = new TopForm();
+        $model->year = $year;
+        if ($model->validate()) {
+            $users = $model->get();
+        }
+
+        return $this->render('top', compact('users', 'model'));
     }
 
     /**
@@ -110,7 +124,7 @@ class SiteController extends Controller
 
         $model = new RegistrationForm();
         if ($model->load(Yii::$app->request->post()) && $model->register()) {
-            Yii::$app->session->setFlash('success',"Вы успешно зарегистрировались. Логин: {$model->login} пароль {$model->password}");
+            Yii::$app->session->setFlash('success', "Вы успешно зарегистрировались. Логин: {$model->login} пароль {$model->password}");
             return $this->goHome();
         }
 
@@ -139,7 +153,7 @@ class SiteController extends Controller
      */
     public function actionView(int $id)
     {
-        $book = Book::find()->with(['coAuthors', 'user'])->where(['id' =>$id])->asArray()->one();
+        $book = Book::find()->with(['authors', 'user'])->where(['id' => $id])->asArray()->one();
         if (!$book) {
             throw new NotFoundHttpException('Книга не найден');
         }

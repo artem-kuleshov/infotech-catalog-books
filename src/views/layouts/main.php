@@ -34,12 +34,13 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
     NavBar::begin(['options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']]);
     $items = [
         ['label' => 'Home', 'url' => ['/site/index']],
+        ['label' => 'Top authors', 'url' => ['/site/top']],
     ];
     if (Yii::$app->user->isGuest) {
         $items[] = ['label' => 'Login', 'url' => ['/site/login']];
         $items[] = ['label' => 'Register', 'url' => ['/site/register']];
     } else {
-        $items[] = ['label' => 'Create book', 'url' => ['/auth/book/create']];
+        $items[] = ['label' => 'Add book', 'url' => ['/auth/book/create']];
         $items[] = '<li class="nav-item">'
                     . Html::beginForm(['/site/logout'])
                     . Html::submitButton(

@@ -25,7 +25,7 @@ class BookController extends AppController
         if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
             $model->image = UploadedFile::getInstance($model, 'image');
             if ($model->validate() && $model->add()) {
-                return $this->redirect(['index']);
+                return $this->goHome();
             }
         }
 
@@ -49,12 +49,12 @@ class BookController extends AppController
         $model = new BookForm();
         $model->scenario = BookForm::SCENARIO_UPDATE;
         $model->attributes = $book->attributes;
-        $model->co_authors = $book->getCoAuthors()->select('id')->column();
+        $model->co_authors = $book->getauthors()->select('id')->column();
 
         if (Yii::$app->request->isPost && $model->load(Yii::$app->request->post())) {
             $model->image = UploadedFile::getInstance($model, 'image');
             if ($model->validate() && $model->update($book)) {
-                return $this->redirect(['index']);
+                return $this->goHome();
             }
         }
 
@@ -79,7 +79,7 @@ class BookController extends AppController
         $book->delete();
 
         Yii::$app->session->setFlash('success', 'Книга удалена');
-        return $this->goBack();
+        return $this->goHome();
     }
 
     /**

@@ -15,7 +15,7 @@ $this->title = 'Catalog books';
     <div class="row mb-3">
         <?php if (!empty($books)):?>
             <?php foreach ($books as $book):?>
-                <div class="col-md-4 col-sm-6 col-xs-12">
+                <div class="col-md-4 col-sm-6 col-xs-12 mb-4">
                     <div class="row">
                         <div class="col-5">
                             <a href="<?=Url::to(['site/view', 'id' => $book['id']])?>">
@@ -41,9 +41,8 @@ $this->title = 'Catalog books';
                             <p class="mb-0">Год: <strong><?=$book['year']?> г.</strong></p>
                             <p class="mb-0">
                                 Авторы: <br/>
-                                <small><?= User::getFullName($book['user'])?></small>
-                                <?php if ($book['coAuthors']):?>
-                                    <?php foreach ($book['coAuthors'] as $author):?>
+                                <?php if ($book['authors']):?>
+                                    <?php foreach ($book['authors'] as $author):?>
                                     <small><?= User::getFullName($author)?></small><br/>
                                     <?php endforeach;?>
                                 <?php endif;?>

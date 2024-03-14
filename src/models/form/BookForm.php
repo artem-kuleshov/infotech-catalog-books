@@ -34,6 +34,7 @@ class BookForm extends Model
             [['year'], 'date', 'format' => 'php:Y'],
             ['co_authors', 'each', 'rule' => ['integer']],
             ['co_authors', 'checkExistUsers'],
+            ['name', 'unique', 'targetClass' => Book::class],
             ['isbn', 'match', 'pattern' => '/^(?=(?:\D*\d){10}(?:(?:\D*\d){3})?$)[\d-]+$/i'],
             [['image'], 'file', 'skipOnEmpty' => false, 'extensions' => 'png, jpg, jpeg', 'on' => self::SCENARIO_CREATE],
             [['image'], 'file', 'extensions' => 'png, jpg, jpeg', 'on' => self::SCENARIO_UPDATE],

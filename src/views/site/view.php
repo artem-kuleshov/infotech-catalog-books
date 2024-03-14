@@ -36,12 +36,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p class="mb-0">
                         Авторы: <br/>
                         <small><?= User::getFullName($book['user'])?></small>
-                        <?php if ($book['coAuthors']):?>
-                            <?php foreach ($book['coAuthors'] as $author):?>
+                        <?php if ($book['authors']):?>
+                            <?php foreach ($book['authors'] as $author):?>
                                 <small><?= User::getFullName($author)?></small><br/>
                             <?php endforeach;?>
                         <?php endif;?>
                     </p>
+                    <p class="mb-0">Описание: <?=$book['description']?></p>
                 </div>
             </div>
         </div>
