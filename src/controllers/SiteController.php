@@ -2,20 +2,24 @@
 
 namespace app\controllers;
 
+use app\models\base\Book;
+use app\models\form\RegistrationForm;
+use JetBrains\PhpStorm\ArrayShape;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\filters\VerbFilter;
-use app\models\LoginForm;
-use app\models\ContactForm;
+use app\models\form\LoginForm;
 
 class SiteController extends Controller
 {
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    #[ArrayShape(['access' => "array", 'verbs' => "array"])]
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -41,6 +45,7 @@ class SiteController extends Controller
     /**
      * {@inheritdoc}
      */
+    #[ArrayShape(['error' => "string[]", 'captcha' => "array"])]
     public function actions()
     {
         return [
@@ -69,7 +74,7 @@ class SiteController extends Controller
      *
      * @return Response|string
      */
-    public function actionLogin()
+    public function actionLogin(): Response|string
     {
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -87,11 +92,34 @@ class SiteController extends Controller
     }
 
     /**
+     * Register action.
+     *
+     * @return Response|string
+     * @throws \yii\base\Exception
+     */
+    public function actionRegister(): Response|string
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new RegistrationForm();
+        if ($model->load(Yii::$app->request->post()) && $model->register()) {
+            Yii::$app->session->setFlash('success',"Вы успешно зарегистрировались. Логин: {$model->login} пароль {$model->password}");
+            return $this->goHome();
+        }
+
+        return $this->render('register', [
+            'model' => $model,
+        ]);
+    }
+
+    /**
      * Logout action.
      *
      * @return Response
      */
-    public function actionLogout()
+    public function actionLogout(): Response
     {
         Yii::$app->user->logout();
 
@@ -102,27 +130,15 @@ class SiteController extends Controller
      * Displays contact page.
      *
      * @return Response|string
+     * @throws NotFoundHttpException
      */
-    public function actionContact()
+    public function actionView(int $id)
     {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
+        $book = Book::find()->with(['coAuthors', 'user'])->where(['id' =>$id])->asArray()->one();
+        if (!$book) {
+            throw new NotFoundHttpException('Книга не найден');
         }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
-    }
 
-    /**
-     * Displays about page.
-     *
-     * @return string
-     */
-    public function actionAbout()
-    {
-        return $this->render('about');
+        return $this->render('view', compact('book'));
     }
 }

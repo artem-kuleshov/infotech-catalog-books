@@ -49,6 +49,9 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'auth/book/page/<page:\d+>' => 'auth/book/index',
+                'auth/book/update/<id:\d+>' => 'auth/book/update',
+                '<id:\d+>' => 'site/view',
             ],
         ],
 

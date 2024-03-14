@@ -1,7 +1,8 @@
 <?php
 
-namespace app\models;
+namespace app\models\form;
 
+use app\models\User;
 use Yii;
 use yii\base\Model;
 
@@ -13,7 +14,7 @@ use yii\base\Model;
  */
 class LoginForm extends Model
 {
-    public $username;
+    public $login;
     public $password;
     public $rememberMe = true;
 
@@ -23,14 +24,11 @@ class LoginForm extends Model
     /**
      * @return array the validation rules.
      */
-    public function rules()
+    public function rules(): array
     {
         return [
-            // username and password are both required
-            [['username', 'password'], 'required'],
-            // rememberMe must be a boolean value
+            [['login', 'password'], 'required'],
             ['rememberMe', 'boolean'],
-            // password is validated by validatePassword()
             ['password', 'validatePassword'],
         ];
     }
@@ -70,10 +68,10 @@ class LoginForm extends Model
      *
      * @return User|null
      */
-    public function getUser()
+    public function getUser(): ?User
     {
         if ($this->_user === false) {
-            $this->_user = User::findByUsername($this->username);
+            $this->_user = User::findByLogin($this->login);
         }
 
         return $this->_user;

@@ -63,4 +63,9 @@ class User extends ActiveRecord implements IdentityInterface
     {
         return $this->auth_key === $authKey;
     }
+
+    public static function getFullName(array $user): string
+    {
+        return "{$user['last_name']} {$user['first_name']} {$user['patronymic']}";
+    }
 }
