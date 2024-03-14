@@ -11,6 +11,11 @@ Install and run Docker
 INSTALLATION
 ------------
 
+Clone repozitory
+~~~
+git clone https://github.com/artem-kuleshov/infotech-catalog-books.git .
+~~~
+
 Run docker compose up
 ~~~
 docker-compose up app
