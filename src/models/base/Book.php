@@ -23,7 +23,7 @@ class Book extends ActiveRecord
     /**
      * @throws \yii\base\InvalidConfigException
      */
-    public function getauthors(): ActiveQuery
+    public function getAuthors(): ActiveQuery
     {
         return $this->hasMany(User::class, ['id' => 'user_id'])
             ->viaTable('book_user', ['book_id' => 'id']);

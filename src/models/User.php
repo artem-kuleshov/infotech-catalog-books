@@ -15,9 +15,13 @@ class User extends ActiveRecord implements IdentityInterface
         return 'user';
     }
 
+    /**
+     * @throws \yii\base\InvalidConfigException
+     */
     public function getBooks(): ActiveQuery
     {
-        return $this->hasMany(Book::class, ['user_id' => 'id']);
+        return $this->hasMany(Book::class, ['id' => 'book_id'])
+            ->viaTable('book_user', ['user_id' => 'id']);
     }
 
     public static function findByLogin(string $login): ?User

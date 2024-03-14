@@ -35,10 +35,13 @@ $this->params['breadcrumbs'][] = $this->title;
                     <p class="mb-0">Год: <strong><?=$book['year']?> г.</strong></p>
                     <p class="mb-0">
                         Авторы: <br/>
-                        <small><?= User::getFullName($book['user'])?></small>
                         <?php if ($book['authors']):?>
                             <?php foreach ($book['authors'] as $author):?>
-                                <small><?= User::getFullName($author)?></small><br/>
+                                <small>
+                                    <a href="<?=Url::to(['author/view', 'id' => $author['id']])?>">
+                                        <?= User::getFullName($author)?>
+                                    </a>
+                                </small><br/>
                             <?php endforeach;?>
                         <?php endif;?>
                     </p>

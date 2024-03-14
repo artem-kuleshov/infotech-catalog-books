@@ -50,6 +50,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'site/page/<page:\d+>' => 'site/index',
+                'author/<id:\d+>' => 'author/view',
                 'auth/book/update/<id:\d+>' => 'auth/book/update',
                 '<id:\d+>' => 'site/view',
             ],

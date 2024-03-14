@@ -14,7 +14,6 @@ class m240313_192743_create_table_subscription extends Migration
     {
         $this->createTable('{{%subscription}}',[
             'id' => $this->primaryKey(),
-            'user_id' => $this->integer()->comment("Авторизованный пользователь тоже может подписаться на авторов"),
             'phone' => $this->string(255)->notNull(),
             'author_id' => $this->integer()->notNull(),
             'ts_create' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
@@ -29,6 +28,8 @@ class m240313_192743_create_table_subscription extends Migration
             'user',
             'id',
             'CASCADE');
+
+        $this->createIndex('idx-subscription-phone_author_id', 'subscription', 'phone, author_id', true);
     }
 
     /**
@@ -38,6 +39,7 @@ class m240313_192743_create_table_subscription extends Migration
     {
         $this->dropForeignKey('fk-subscription-author_id', 'subscription');
         $this->dropIndex('idx-subscription-author_id', 'subscription');
+        $this->dropIndex('idx-subscription-phone_author_id', 'subscription');
 
         $this->dropTable('{{%subscription}}');
     }

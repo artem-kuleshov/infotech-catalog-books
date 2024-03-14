@@ -14,8 +14,8 @@ class Subscription extends ActiveRecord
         return 'subscription';
     }
 
-    public function getUser(): ActiveQuery
+    public function getAuthor(): ActiveQuery
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'author_id']);
     }
 }

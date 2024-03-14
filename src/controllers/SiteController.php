@@ -70,7 +70,7 @@ class SiteController extends Controller
     {
         $query = Book::find();
         $pages = new Pagination(['totalCount' => $query->count(), 'forcePageParam' => false, 'pageSizeParam' => false]);
-        $books = $query->with(['authors', 'user'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
+        $books = $query->with(['authors'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
 
         return $this->render('index', compact('books', 'pages'));
     }
