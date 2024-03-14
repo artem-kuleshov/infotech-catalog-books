@@ -5,7 +5,6 @@ namespace app\controllers\auth;
 use app\models\base\Book;
 use app\models\form\BookForm;
 use Yii;
-use yii\data\Pagination;
 use yii\web\ForbiddenHttpException;
 use yii\web\NotFoundHttpException;
 use yii\web\Response;
@@ -13,20 +12,6 @@ use yii\web\UploadedFile;
 
 class BookController extends AppController
 {
-    /**
-     * Displays homepage.
-     *
-     * @return string
-     */
-    public function actionIndex(): string
-    {
-        $query = Book::find();
-        $pages = new Pagination(['totalCount' => $query->count(), 'forcePageParam' => false, 'pageSizeParam' => false]);
-        $books = $query->with(['coAuthors', 'user'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
-
-        return $this->render('index', compact('books', 'pages'));
-    }
-
     /**
      * Create action.
      *

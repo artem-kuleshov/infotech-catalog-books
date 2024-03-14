@@ -6,6 +6,7 @@ use app\models\base\Book;
 use app\models\form\RegistrationForm;
 use JetBrains\PhpStorm\ArrayShape;
 use Yii;
+use yii\data\Pagination;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -64,9 +65,13 @@ class SiteController extends Controller
      *
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
-        return $this->render('index');
+        $query = Book::find();
+        $pages = new Pagination(['totalCount' => $query->count(), 'forcePageParam' => false, 'pageSizeParam' => false]);
+        $books = $query->with(['coAuthors', 'user'])->offset($pages->offset)->limit($pages->limit)->asArray()->all();
+
+        return $this->render('index', compact('books', 'pages'));
     }
 
     /**
