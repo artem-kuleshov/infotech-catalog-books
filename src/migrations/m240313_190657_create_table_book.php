@@ -18,7 +18,7 @@ class m240313_190657_create_table_book extends Migration
             'name' => $this->string(255)->notNull()->unique(),
             'year' => $this->integer()->notNull(),
             'description' => $this->text(),
-            'isbn' => $this->bigInteger(),
+            'isbn' => $this->string()->notNull(),
             'main_image' => $this->string(255),
             'ts_create' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
         ]);
@@ -36,15 +36,8 @@ class m240313_190657_create_table_book extends Migration
 
     public function safeDown()
     {
-        $this->dropForeignKey(
-            'idx-book-user_id',
-            'book'
-        );
-
-        $this->dropIndex(
-            'fk-book-user_id',
-            'book'
-        );
+        $this->dropForeignKey('fk-book-user_id', 'book');
+        $this->dropIndex('idx-book-user_id', 'book');
 
         $this->dropTable('{{%book}}');
     }

@@ -12,7 +12,23 @@ class m240313_192743_create_table_subscription extends Migration
      */
     public function safeUp()
     {
+        $this->createTable('{{%subscription}}',[
+            'id' => $this->primaryKey(),
+            'user_id' => $this->integer()->comment("Авторизованный пользователь тоже может подписаться на авторов"),
+            'phone' => $this->string(255)->notNull(),
+            'author_id' => $this->integer()->notNull(),
+            'ts_create' => $this->dateTime()->defaultExpression('CURRENT_TIMESTAMP'),
+        ]);
 
+        $this->createIndex('idx-subscription-author_id', 'subscription', 'author_id');
+
+        $this->addForeignKey(
+            'fk-subscription-author_id',
+            'subscription',
+            'author_id',
+            'user',
+            'id',
+            'CASCADE');
     }
 
     /**
@@ -20,23 +36,9 @@ class m240313_192743_create_table_subscription extends Migration
      */
     public function safeDown()
     {
-        echo "m240313_192743_create_table_subscription cannot be reverted.\n";
+        $this->dropForeignKey('fk-subscription-author_id', 'subscription');
+        $this->dropIndex('idx-subscription-author_id', 'subscription');
 
-        return false;
+        $this->dropTable('{{%subscription}}');
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m240313_192743_create_table_subscription cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }
